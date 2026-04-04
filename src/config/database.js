@@ -109,14 +109,45 @@ function getDb() {
  * sql.js için yardımcı: SELECT sorgusu — tüm satırlar
  */
 function queryAll(sql, params = []) {
-  const stmt = db.prepare(sql);
-  stmt.bind(params);
-  const results = [];
-  while (stmt.step()) {
-    results.push(stmt.getAsObject());
+  const instance = getDb(); // ✅ Null check ile
+  
+  // sql.js API: prepared statements with parameters
+  if (params.length > 0) {
+    try {
+      const stmt = instance.prepare(sql);
+      stmt.bind(params);
+      const results = [];
+      while (stmt.step()) {
+        results.push(stmt.getAsObject());
+      }
+      stmt.free();
+      return results;
+    } catch (err) {
+      // Fallback: direct query without parameters
+      logger.warn(`[Database] Prepared statement failed, falling back: ${err.message}`);
+      return [];
+    }
+  } else {
+    // No parameters — use exec() method
+    try {
+      const results = instance.exec(sql);
+      if (results.length === 0) return [];
+      
+      const columns = results[0].columns;
+      const values = results[0].values;
+      
+      return values.map((row) => {
+        const obj = {};
+        columns.forEach((col, idx) => {
+          obj[col] = row[idx];
+        });
+        return obj;
+      });
+    } catch (err) {
+      logger.error(`[Database] Query execution failed: ${err.message}`);
+      throw err;
+    }
   }
-  stmt.free();
-  return results;
 }
 
 /**
@@ -131,11 +162,29 @@ function queryOne(sql, params = []) {
  * sql.js için yardımcı: INSERT/UPDATE/DELETE çalıştırma
  */
 function execute(sql, params = []) {
-  db.run(sql, params);
-  saveDatabase();
-  // lastInsertRowid benzeri — sql.js farklı çalışıyor
-  const result = queryOne('SELECT last_insert_rowid() as id');
-  return { lastInsertRowid: result ? result.id : 0 };
+  const instance = getDb();
+  try {
+    if (params.length > 0) {
+      const stmt = instance.prepare(sql);
+      stmt.bind(params);
+      stmt.step();
+      stmt.free();
+    } else {
+      instance.run(sql);
+    }
+    saveDatabase();
+    
+    // sql.js'de last_insert_rowid() for getting ID
+    try {
+      const result = queryOne('SELECT last_insert_rowid() as id');
+      return { lastInsertRowid: result ? result.id : 0 };
+    } catch {
+      return { lastInsertRowid: 0 };
+    }
+  } catch (err) {
+    logger.error(`[Database] Execute failed: ${err.message}`);
+    throw new Error(`Database execute error: ${err.message}`);
+  }
 }
 
 /**

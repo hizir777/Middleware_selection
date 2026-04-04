@@ -99,7 +99,7 @@ function authGuard() {
             }, decoded.username);
 
             // Parmak izini güncelle (kullanıcı zaten doğrulanmış)
-            execute('UPDATE users SET fingerprint = ? WHERE id = ?', [currentFingerprint, decoded.id]);
+            await execute('UPDATE users SET fingerprint = ? WHERE id = ?', [currentFingerprint, decoded.id]);
           }
         } catch (fpErr) {
           // Parmak izi karşılaştırma hatası — isteği engelleme

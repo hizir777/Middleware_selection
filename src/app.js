@@ -19,9 +19,6 @@ const corsHandler = require('./middlewares/corsHandler');
 const requestLogger = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler');
 
-// Rotalar
-const routes = require('./routes');
-
 const app = express();
 
 // ══════════════════════════════════════════════════════════════
@@ -98,20 +95,11 @@ app.use(requestLogger());
 // ─── Statik Dosyalar (Frontend Dashboard) ─────────
 app.use(express.static(path.join(__dirname, '../public')));
 
-// 6️⃣ + 7️⃣  Auth & RBAC — Rota bazlı uygulanır (routes/index.js içinde)
-app.use('/api', routes);
-
-// ─── 404 Handler ──────────────────────────────────
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'İstenen kaynak bulunamadı',
-    path: req.originalUrl,
-  });
-});
-
-// 8️⃣  Global Error Handler — Tüm hataları yakalar
-app.use(errorHandler);
+// ⚠️  Routes ve Error Handlers'ı setup yapmıyoruz burada.
+//    initDatabase() SONRA async olarak sırayla:
+//    1. Routes register et
+//    2. 404 Handler register et
+//    3. Global Error Handler register et
 
 // ══════════════════════════════════════════════════════════════
 // Server Startup & Graceful Shutdown
@@ -124,6 +112,22 @@ async function startServer() {
 
     // SQLite veritabanı başlatma (sql.js — async WASM yükleme)
     await initDatabase();
+
+    // 6️⃣ + 7️⃣  Database ready olunca routes'i register et
+    const routes = require('./routes');
+    app.use('/api', routes);
+
+    // ─── 404 Handler — Routes'den SONRA register edilmelidir! ──────
+    app.use((req, res) => {
+      res.status(404).json({
+        success: false,
+        error: 'İstenen kaynak bulunamadı',
+        path: req.originalUrl,
+      });
+    });
+
+    // 8️⃣  Global Error Handler — Tüm hataları yakalar (EN SONDA)
+    app.use(errorHandler);
 
     // HTTP sunucusu
     const server = app.listen(config.port, () => {

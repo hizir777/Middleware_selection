@@ -26,9 +26,9 @@ const AUDIT_EVENTS = {
 /**
  * Audit log kaydı oluşturur.
  */
-function logAudit(entry) {
+async function logAudit(entry) {
   try {
-    execute(
+    await execute(
       `INSERT INTO audit_logs (user_id, action, details, ip, user_agent, request_id)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [
@@ -51,7 +51,7 @@ function logAudit(entry) {
  * Audit log + Telegram bildirimi (güvenlik olayları için).
  */
 async function logSecurityEvent(entry, username) {
-  logAudit(entry);
+  await logAudit(entry);
 
   const alert = formatSecurityAlert({
     event: entry.action,
@@ -68,7 +68,7 @@ async function logSecurityEvent(entry, username) {
  * Audit log + Telegram bildirimi (genel audit olayları için).
  */
 async function logAuditEvent(entry, username) {
-  logAudit(entry);
+  await logAudit(entry);
 
   const alert = formatAuditAlert({
     event: entry.action,

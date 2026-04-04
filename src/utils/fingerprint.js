@@ -25,16 +25,23 @@ function generateFingerprint(req) {
 
 /**
  * İki parmak izini karşılaştırır.
- * @param {string} stored     - Kayıtlı parmak izi
- * @param {string} incoming   - Yeni istekten gelen parmak izi
+ * @param {string} stored     - Kayıtlı parmak izi (SHA-256 hex string)
+ * @param {string} incoming   - Yeni istekten gelen parmak izi (SHA-256 hex string)
  * @returns {boolean}
  */
 function compareFingerprints(stored, incoming) {
   if (!stored || !incoming) return false;
-  return crypto.timingSafeEqual(
-    Buffer.from(stored, 'hex'),
-    Buffer.from(incoming, 'hex')
-  );
+  // Hex string karşılaştırması (timing-safe)
+  if (stored.length !== incoming.length) return false;
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(stored),
+      Buffer.from(incoming)
+    );
+  } catch (err) {
+    // Buffer oluşturma hatası — strings eşit değil
+    return false;
+  }
 }
 
 /**

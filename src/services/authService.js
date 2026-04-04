@@ -110,7 +110,7 @@ async function login({ email, password }, req) {
   }
 
   // JWT oluştur
-  const { token, jti } = tokenService.signToken({
+  const { token, jti } = await tokenService.signToken({
     id: user.id,
     username: user.username,
     email: user.email,

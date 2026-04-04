@@ -18,9 +18,9 @@ const USER_TOKENS_PREFIX = 'user_tokens:';
 /**
  * JWT oluşturur.
  * @param {object} payload - Token verisi { id, username, email, role }
- * @returns {{ token: string, jti: string }}
+ * @returns {Promise<{token: string, jti: string}>}
  */
-function signToken(payload) {
+async function signToken(payload) {
   const jti = uuidv4(); // Benzersiz token kimliği
 
   const token = jwt.sign(
@@ -34,8 +34,8 @@ function signToken(payload) {
   const decoded = jwt.decode(token);
   const ttl = decoded.exp - Math.floor(Date.now() / 1000);
 
-  redis.sadd(`${USER_TOKENS_PREFIX}${payload.id}`, jti);
-  redis.expire(`${USER_TOKENS_PREFIX}${payload.id}`, ttl);
+  await redis.sadd(`${USER_TOKENS_PREFIX}${payload.id}`, jti);
+  await redis.expire(`${USER_TOKENS_PREFIX}${payload.id}`, ttl);
 
   return { token, jti };
 }
