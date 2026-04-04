@@ -42,7 +42,6 @@ Eğer Auth (JWT doğrulama) Rate Limiter'dan **önce** gelirse:
 
 **HAYIR.** "Saldırı Simülasyonu" adı sadece test senaryosudur. **Arka plan (Backend) tamamen GERÇEKTİR.** 
 
-Hocanıza kanıtlamak için şu argümanları kullanabilirsiniz:
 1. **Gerçek Veritabanı:** Kullanıcılar sadece tarayıcı belleğine değil, doğrudan sunucudaki SQLite (`middleware.db`) dosyasına kalıcı olarak yazılır. Sunucuyu kapatsanız da veriler kaybolmaz. (Native sorunları aşmak için WebAssembly destekli `sql.js` taşıyıcı motoru ile çalışır).
 2. **Gerçek Kriptografi:** Şifreler `bcryptjs` kütüphanesi ile Endüstri Standartlarında (Salt Round 10) hashlenir. Düz metin olarak saklanmaz.
 3. **Gerçek JWT Oturumları:** Giriş yaptığınızda `jsonwebtoken` size imzalı gerçek bir JWT verir. Şifrenizi değiştirdiğinizde token "Blacklist'e (Kara Liste)" alınır (Revocation). 
