@@ -69,7 +69,7 @@ Eğer Auth (JWT doğrulama) Rate Limiter'dan **önce** gelirse:
 
 ```bash
 # 1. Repoyu klonla
-git clone <repo-url>
+git clone https://github.com/hizir777/Middleware_selection.git
 cd Middleware_selection
 
 # 2. Ortam değişkenlerini yapılandır
