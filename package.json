@@ -1,0 +1,45 @@
+{
+  "name": "middleware-selection",
+  "version": "1.0.0",
+  "description": "Cheap Check First — Güvenli ve Performanslı Middleware Hiyerarşisi (Request Processing Pipeline)",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles",
+    "lint": "eslint src/ --ext .js",
+    "simulate:attack": "node scripts/attack_simulation.js",
+    "simulate:session": "node scripts/session_test.js",
+    "simulate:hierarchy": "node scripts/hierarchy_test.js",
+    "docker:up": "docker-compose up --build -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": [
+    "middleware",
+    "security",
+    "rate-limiter",
+    "jwt",
+    "rbac",
+    "redis",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "sql.js": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "eslint": "^8.57.0"
+  }
+}

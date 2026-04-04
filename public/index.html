@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Middleware Selection — Güvenli Request Processing Pipeline Dashboard">
+  <title>Middleware Selection — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- OVERLAY — Loading / Notification           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="notification" class="notification hidden">
+    <span id="notification-icon"></span>
+    <span id="notification-text"></span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SIDEBAR                                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🛡️</div>
+      <div class="brand-text">
+        <h1>MW Select</h1>
+        <span class="brand-subtitle">Pipeline Dashboard</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="auth-section" id="nav-auth">
+        <span class="nav-icon">🔐</span>
+        <span>Kimlik Doğrulama</span>
+      </a>
+      <a href="#" class="nav-item" data-section="pipeline-section" id="nav-pipeline">
+        <span class="nav-icon">⚡</span>
+        <span>Pipeline Görsel</span>
+      </a>
+      <a href="#" class="nav-item" data-section="test-section" id="nav-test">
+        <span class="nav-icon">🧪</span>
+        <span>API Test</span>
+      </a>
+      <a href="#" class="nav-item" data-section="audit-section" id="nav-audit">
+        <span class="nav-icon">📋</span>
+        <span>Audit Logları</span>
+      </a>
+      <a href="#" class="nav-item" data-section="attack-section" id="nav-attack">
+        <span class="nav-icon">💥</span>
+        <span>Saldırı Simülasyonu</span>
+      </a>
+      <a href="#" class="nav-item" data-section="health-section" id="nav-health">
+        <span class="nav-icon">💚</span>
+        <span>Sistem Durumu</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" id="user-info">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div class="user-details">
+        <span class="user-name" id="user-name">Giriş Yapın</span>
+        <span class="user-role" id="user-role">Misafir</span>
+      </div>
+      <button class="btn-icon" id="btn-logout" title="Çıkış Yap" style="display:none">
+        🚪
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MAIN CONTENT                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <main class="main-content">
+    <!-- ─── Header ─────────────────────────────── -->
+    <header class="content-header">
+      <div>
+        <h2 id="page-title">Kimlik Doğrulama</h2>
+        <p class="header-subtitle" id="page-subtitle">Kayıt olun veya giriş yapın</p>
+      </div>
+      <div class="header-status">
+        <div class="status-dot" id="server-status-dot"></div>
+        <span id="server-status-text">Kontrol ediliyor...</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: Auth                              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="auth-section" class="content-section active">
+      <div class="auth-grid">
+        <!-- Register Card -->
+        <div class="card glass-card" id="register-card">
+          <div class="card-header">
+            <h3>📝 Kayıt Ol</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="reg-username">Kullanıcı Adı</label>
+              <input type="text" id="reg-username" placeholder="ornek_kullanici" autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" placeholder="ornek@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="reg-password">Şifre</label>
+              <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+              <label for="reg-role">Rol</label>
+              <select id="reg-role">
+                <option value="student">Student</option>
+                <option value="editor">Editor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-register">Kayıt Ol</button>
+          </div>
+        </div>
+
+        <!-- Login Card -->
+        <div class="card glass-card" id="login-card">
+          <div class="card-header">
+            <h3>🔑 Giriş Yap</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" placeholder="ornek@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="login-password">Şifre</label>
+              <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <button class="btn btn-accent" id="btn-login">Giriş Yap</button>
+          </div>
+        </div>
+
+        <!-- Change Password Card -->
+        <div class="card glass-card" id="password-card">
+          <div class="card-header">
+            <h3>🔄 Şifre Değiştir</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="old-password">Mevcut Şifre</label>
+              <input type="password" id="old-password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+              <label for="new-password">Yeni Şifre</label>
+              <input type="password" id="new-password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-warning" id="btn-change-password">Şifre Değiştir</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: Pipeline Visualization            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="pipeline-section" class="content-section">
+      <div class="pipeline-container">
+        <div class="pipeline-header">
+          <h3>⚡ Middleware Pipeline — "Cheap Check First"</h3>
+          <p>İsteğin sunucuya ulaşma yolculuğu. Her katman bir öncekinden daha "pahalı"dır.</p>
+        </div>
+
+        <div class="pipeline-flow">
+          <div class="pipeline-step step-cheapest" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-icon">🏍️</div>
+              <h4>Rate Limiter</h4>
+              <span class="step-alias">"Yunus Polisi"</span>
+              <div class="step-cost">~0.1ms • Redis</div>
+              <p>Aşırı istekleri elemek. Auth'a ulaşmaz!</p>
+            </div>
+            <div class="step-badge cheapest">En Ucuz</div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-cheap" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-icon">🌐</div>
+              <h4>CORS</h4>
+              <span class="step-alias">Köken Kontrolü</span>
+              <div class="step-cost">~0.01ms • Bellek</div>
+              <p>Origin ve method doğrulama</p>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-cheap" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-icon">🪖</div>
+              <h4>Helmet</h4>
+              <span class="step-alias">Güvenlik Header</span>
+              <div class="step-cost">~0.01ms • Bellek</div>
+              <p>XSS, Sniffing koruması</p>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-medium" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-icon">📹</div>
+              <h4>Logger</h4>
+              <span class="step-alias">"Gözetleme Kamerası"</span>
+              <div class="step-cost">~1ms • I/O</div>
+              <p>Request ID + Süre ölçümü</p>
+            </div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-expensive" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-content">
+              <div class="step-icon">👮</div>
+              <h4>Auth Guard</h4>
+              <span class="step-alias">"Polis"</span>
+              <div class="step-cost">~5-10ms • CPU+Redis</div>
+              <p>JWT + Fingerprint + Revocation</p>
+            </div>
+            <div class="step-badge expensive">Pahalı</div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-most-expensive" data-step="6">
+            <div class="step-number">6</div>
+            <div class="step-content">
+              <div class="step-icon">🏢</div>
+              <h4>RBAC Guard</h4>
+              <span class="step-alias">"Zabıta"</span>
+              <div class="step-cost">~2ms • DB</div>
+              <p>Rol tabanlı yetki kontrolü</p>
+            </div>
+            <div class="step-badge most-expensive">En Pahalı</div>
+          </div>
+
+          <div class="pipeline-arrow">→</div>
+
+          <div class="pipeline-step step-controller" data-step="7">
+            <div class="step-number">7</div>
+            <div class="step-content">
+              <div class="step-icon">⚙️</div>
+              <h4>Controller</h4>
+              <span class="step-alias">İş Mantığı</span>
+              <div class="step-cost">Değişken</div>
+              <p>Temizlenmiş veriyle çalışır</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Karşılaştırma Tablosu -->
+        <div class="comparison-table">
+          <h4>🔀 Sıralama Karşılaştırması</h4>
+          <div class="comparison-grid">
+            <div class="comparison-card correct">
+              <div class="comparison-icon">✅</div>
+              <h5>DOĞRU SIRA</h5>
+              <p>RateLimit → Auth → Controller</p>
+              <div class="comparison-result good">Sahte istekler 0.1ms'de elenir → CPU sakin</div>
+            </div>
+            <div class="comparison-card wrong">
+              <div class="comparison-icon">❌</div>
+              <h5>YANLIŞ SIRA</h5>
+              <p>Auth → RateLimit → Controller</p>
+              <div class="comparison-result bad">Her istekte crypto.verify → CPU tavan yapar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: API Test                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="test-section" class="content-section">
+      <div class="test-grid">
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>🧪 API Endpoint Test</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="test-method">Metod</label>
+              <select id="test-method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="test-endpoint">Endpoint</label>
+              <select id="test-endpoint">
+                <option value="/api/health">GET /api/health (Public)</option>
+                <option value="/api/dashboard">GET /api/dashboard (Student+)</option>
+                <option value="/api/editor/content">GET /api/editor/content (Editor+)</option>
+                <option value="/api/admin/panel">GET /api/admin/panel (Admin)</option>
+                <option value="/api/audit-logs">GET /api/audit-logs (Admin)</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-test-api">İstek Gönder</button>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>📤 Yanıt</h3>
+            <span class="response-badge" id="response-status"></span>
+          </div>
+          <div class="card-body">
+            <div class="response-meta" id="response-meta"></div>
+            <pre class="response-body" id="response-body">Henüz istek gönderilmedi</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: Audit Logs                        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="audit-section" class="content-section">
+      <div class="card glass-card">
+        <div class="card-header">
+          <h3>📋 Audit Log Kayıtları</h3>
+          <button class="btn btn-sm" id="btn-refresh-audit">🔄 Yenile</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="data-table" id="audit-table">
+              <thead>
+                <tr>
+                  <th>Zaman</th>
+                  <th>Kullanıcı</th>
+                  <th>Olay</th>
+                  <th>Detay</th>
+                  <th>IP</th>
+                </tr>
+              </thead>
+              <tbody id="audit-tbody">
+                <tr>
+                  <td colspan="5" class="empty-state">Giriş yapıp Admin rolünde olmalısınız</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: Attack Simulation                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="attack-section" class="content-section">
+      <div class="attack-grid">
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>💥 Saldırı Simülasyonu</h3>
+          </div>
+          <div class="card-body">
+            <p class="info-text">Rate Limiter'ın çalışmasını test edin. Belirli sayıda istek göndererek hangi noktada <code>429 Too Many Requests</code> döndüğünü gözlemleyin.</p>
+            <div class="form-group">
+              <label for="attack-target">Hedef Rota</label>
+              <select id="attack-target">
+                <option value="/api/auth/login">/api/auth/login (Kritik — 10/dk)</option>
+                <option value="/api/health">/api/health (Genel — 2000/dk)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="attack-count">İstek Sayısı</label>
+              <input type="number" id="attack-count" value="20" min="1" max="200">
+            </div>
+            <div class="form-group">
+              <label for="attack-delay">İstekler Arası Gecikme (ms)</label>
+              <input type="number" id="attack-delay" value="50" min="0" max="1000">
+            </div>
+            <button class="btn btn-danger" id="btn-start-attack">🚀 Saldırıyı Başlat</button>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h3>📊 Sonuçlar</h3>
+          </div>
+          <div class="card-body">
+            <div class="attack-stats">
+              <div class="stat-card">
+                <span class="stat-value" id="stat-total">0</span>
+                <span class="stat-label">Toplam</span>
+              </div>
+              <div class="stat-card success">
+                <span class="stat-value" id="stat-success">0</span>
+                <span class="stat-label">Başarılı (200)</span>
+              </div>
+              <div class="stat-card danger">
+                <span class="stat-value" id="stat-blocked">0</span>
+                <span class="stat-label">Engellendi (429)</span>
+              </div>
+              <div class="stat-card warning">
+                <span class="stat-value" id="stat-other">0</span>
+                <span class="stat-label">Diğer</span>
+              </div>
+            </div>
+            <div class="attack-progress" id="attack-progress" style="display:none">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+              <span class="progress-text" id="progress-text">0%</span>
+            </div>
+            <div class="attack-log" id="attack-log"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION: System Health                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="health-section" class="content-section">
+      <div class="health-grid">
+        <div class="card glass-card health-card" id="health-app-card">
+          <div class="health-icon">🖥️</div>
+          <h4>Uygulama</h4>
+          <span class="health-status" id="health-app-status">—</span>
+          <span class="health-detail" id="health-app-detail"></span>
+        </div>
+        <div class="card glass-card health-card" id="health-redis-card">
+          <div class="health-icon">🔴</div>
+          <h4>Redis</h4>
+          <span class="health-status" id="health-redis-status">—</span>
+          <span class="health-detail" id="health-redis-detail"></span>
+        </div>
+        <div class="card glass-card health-card" id="health-uptime-card">
+          <div class="health-icon">⏱️</div>
+          <h4>Uptime</h4>
+          <span class="health-status" id="health-uptime-status">—</span>
+          <span class="health-detail" id="health-uptime-detail"></span>
+        </div>
+      </div>
+      <div class="card glass-card" style="margin-top: 1.5rem">
+        <div class="card-header">
+          <h3>📊 Rate Limit Tablosu</h3>
+        </div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rota</th>
+                <th>Limit (dakika)</th>
+                <th>Aşıldığında</th>
+                <th>Auth'a Ulaşır mı?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>POST /api/auth/login</code></td>
+                <td>10</td>
+                <td><span class="badge badge-danger">429</span></td>
+                <td>❌ Hayır</td>
+              </tr>
+              <tr>
+                <td><code>POST /api/auth/register</code></td>
+                <td>10</td>
+                <td><span class="badge badge-danger">429</span></td>
+                <td>❌ Hayır</td>
+              </tr>
+              <tr>
+                <td><code>GET /api/dashboard</code></td>
+                <td>2000</td>
+                <td><span class="badge badge-danger">429</span></td>
+                <td>❌ Hayır</td>
+              </tr>
+              <tr>
+                <td><code>GET /api/admin/panel</code></td>
+                <td>2000</td>
+                <td><span class="badge badge-danger">429</span></td>
+                <td>❌ Hayır</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
