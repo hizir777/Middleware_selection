@@ -47,6 +47,9 @@ afterAll(async () => {
 });
 
 describe('Middleware Pipeline Tests', () => {
+  const uniqueTestUser = `testuser_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+  const uniqueTestEmail = `test_${Date.now()}_${Math.floor(Math.random() * 1000)}@example.com`;
+
   // ─── Health Endpoint ──────────────────────────
   describe('GET /api/health', () => {
     it('should return health status', async () => {
@@ -63,23 +66,23 @@ describe('Middleware Pipeline Tests', () => {
       const res = await request(app)
         .post('/api/auth/register')
         .send({
-          username: 'testuser',
-          email: 'test@example.com',
+          username: uniqueTestUser,
+          email: uniqueTestEmail,
           password: 'TestPassword123',
           role: 'student',
         });
 
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
-      expect(res.body.user.username).toBe('testuser');
+      expect(res.body.user.username).toBe(uniqueTestUser);
     });
 
     it('should reject duplicate user', async () => {
       const res = await request(app)
         .post('/api/auth/register')
         .send({
-          username: 'testuser',
-          email: 'test@example.com',
+          username: uniqueTestUser,
+          email: uniqueTestEmail,
           password: 'TestPassword123',
         });
 
@@ -102,7 +105,7 @@ describe('Middleware Pipeline Tests', () => {
       const res = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'test@example.com',
+          email: uniqueTestEmail,
           password: 'TestPassword123',
         });
 
@@ -115,7 +118,7 @@ describe('Middleware Pipeline Tests', () => {
       const res = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'test@example.com',
+          email: uniqueTestEmail,
           password: 'WrongPassword',
         });
 
@@ -128,19 +131,21 @@ describe('Middleware Pipeline Tests', () => {
     let token;
 
     beforeAll(async () => {
+      const uniqueSuffix = Date.now() + Math.floor(Math.random() * 1000);
+      const email = `admin_${uniqueSuffix}@test.com`;
       // Admin kullanıcı oluştur ve login yap
       await request(app)
         .post('/api/auth/register')
         .send({
-          username: 'admin_test',
-          email: 'admin@test.com',
+          username: `admin_test_${uniqueSuffix}`,
+          email: email,
           password: 'AdminPass123',
           role: 'admin',
         });
 
       const login = await request(app)
         .post('/api/auth/login')
-        .send({ email: 'admin@test.com', password: 'AdminPass123' });
+        .send({ email: email, password: 'AdminPass123' });
 
       token = login.body.token; // assign to outer let token
     });
@@ -173,19 +178,21 @@ describe('Middleware Pipeline Tests', () => {
     let studentToken;
 
     beforeAll(async () => {
+      const uniqueSuffix = Date.now() + Math.floor(Math.random() * 1000);
+      const email = `student_${uniqueSuffix}@test.com`;
       // Student kullanıcı
       await request(app)
         .post('/api/auth/register')
         .send({
-          username: 'student_test',
-          email: 'student@test.com',
+          username: `student_test_${uniqueSuffix}`,
+          email: email,
           password: 'StudentPass123',
           role: 'student',
         });
 
       const login = await request(app)
         .post('/api/auth/login')
-        .send({ email: 'student@test.com', password: 'StudentPass123' });
+        .send({ email: email, password: 'StudentPass123' });
 
       studentToken = login.body.token;
     });
