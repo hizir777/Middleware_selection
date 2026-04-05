@@ -1,25 +1,5 @@
 # 🎓 Middleware Selection — Güvenli Web Geliştirme Vize Projesi
 
-> **"Cheap Check First"** prensibi ile tasarlanmış, yüksek performanslı ve güvenli ara katman hiyerarşisi.
->
-> **Vize Başlığı:** Güvenli Request Processing Pipeline - Middleware Sıralama Optimizasyonu
-
----
-
-## 📊 Proje Özeti
-
-Bu proje, **Bölüm:** Bilgisayar Mühendisliği / Siber Güvenlik, **Dersin:** Güvenli Web Geliştirme, **Dönem:** 2026 Bahar vize ödevi olarak sunulmaktadır.
-
-| Kritik | Puanlar |
-|--------|---------|
-| **Konu İlişkiliği** | ✅ 8.5/10 — OWASP A01, A05, A08 zaafiyet kategorileri |
-| **Teknik Derinlik** | ✅ 7.5/10 — JWT revocation, fingerprinting, rate limiting |
-| **Uygulanabilirlik** | ✅ 8/10 — Docker ready, production-near |
-| **Güvenlik** | ✅ 7.5/10 — Audit logging, RBAC, token blacklist |
-| **Dokümantasyon** | ✅ 9/10 — Comprehensive guides (bkz. → linkler) |
-| **İnovasyon** | ✅ 7.5/10 — Fingerprint + Telegram alert sistemi |
-| **ORTALAMA** | **✅ 8/10** |
-
 ---
 
 ## 📚 Dokümantasyon Harita
@@ -35,8 +15,6 @@ Bu proje, **Bölüm:** Bilgisayar Mühendisliği / Siber Güvenlik, **Dersin:** 
 | **Performans** | Benchmark, optimization, tuning | [**PERFORMANCE.md**](PERFORMANCE.md) ⭐ YENİ |
 | **Veritabanı** | Schema, indexes, lifecycle | [**docs/DATABASE_SCHEMA.md**](docs/DATABASE_SCHEMA.md) ⭐ YENİ |
 | **Changelog** | Sürüm geçmişi | [CHANGELOG.md](CHANGELOG.md) |
-
-**⭐ YENİ:** Vize projesi kalitesini 10/10'a çıkarmak için eklenen dokümantasyon.
 
 ---
 
@@ -359,23 +337,6 @@ Push to Main/Develop
 
 ---
 
-## 🎓 Vize Ödevi Gereksinimleri
-
-| Gereksinim | Durum | İspat |
-|-----------|-------|-------|
-| Problem Tanımı | ✅ | [Roadmap.md](Roadmap.md) |
-| Mimari Tasarım | ✅ | [docs/architecture.md](docs/architecture.md) |
-| Kod Uygulaması | ✅ | `src/` klasörü (500+ satır production code) |
-| API Dokümantasyonu | ✅ | [README.md](README.md) API section |
-| Test Planı | ✅ | `tests/` klasörü (unit + E2E) |
-| Security Analysis | ✅ | [SECURITY.md](SECURITY.md) |
-| Performance Report | ✅ | [PERFORMANCE.md](PERFORMANCE.md) |
-| Deployment Guide | ✅ | [DEPLOYMENT.md](DEPLOYMENT.md) |
-| Troubleshooting | ✅ | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
-| User Manual | ✅ | Public dashboard (http://localhost:3000) |
-
----
-
 ## 🤝 Katılım
 
 Fork edilip PR gönderilebilir. Öneriler, bug reports, feature requests hoş karşılanır.
@@ -392,29 +353,5 @@ git push origin feature/my-feature
 ## 📜 Lisans
 
 MIT License — Bkz. [LICENSE](LICENSE)
-├── src/
-│   ├── config/                   # Merkezi konfigürasyon
-│   ├── constants/                # Sabitler (HTTP kodları, roller)
-│   ├── controllers/              # İstek işleme mantığı
-│   ├── middlewares/              # ★ PROJENİN KALBİ ★
-│   │   ├── rateLimiter.js        # "Yunus Polisi" (Redis)
-│   │   ├── corsHandler.js        # CORS kontrolü
-│   │   ├── logger.js             # Request ID + Timing
-│   │   ├── authGuard.js          # JWT + Fingerprint
-│   │   ├── rbacGuard.js          # "Zabıta" (Rol kontrolü)
-│   │   └── errorHandler.js       # Global hata yakalama
-│   ├── routes/                   # API rota tanımları
-│   ├── services/                 # İş mantığı
-│   ├── utils/                    # Yardımcı araçlar
-│   └── app.js                    # Giriş noktası
-├── tests/                        # Jest testleri
-├── docker-compose.yml            # Redis + App orkestrasyonu
-├── Dockerfile                    # Multi-stage build
-└── package.json
-```
 
 ---
-
-## 📝 Lisans
-
-MIT License
