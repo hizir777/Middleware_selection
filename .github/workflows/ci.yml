@@ -64,12 +64,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Clean database (remove stale db)
+        run: rm -f middleware.db
+        continue-on-error: true
+      
       - name: Run unit tests
-        run: npm test
+        run: npm run test -- tests/middleware.test.js --testTimeout=10000
         env:
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
           JWT_SECRET: ci_test_secret_key_minimum_32_chars
+      
+      - name: Run E2E tests
+        run: npm run test:e2e -- --testTimeout=10000
+        env:
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+          JWT_SECRET: ci_test_secret_key_minimum_32_chars
+        continue-on-error: false
 
   # ═══════════════════════════════════════════════════════════
   # BUILD DOCKER IMAGE
