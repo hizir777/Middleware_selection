@@ -148,7 +148,7 @@ describe('Middleware Pipeline Tests', () => {
         .send({ email: email, password: 'AdminPass123' });
 
       token = login.body.token; // assign to outer let token
-    });
+    }, 30000);
 
     it('should reject access without token', async () => {
       const res = await request(app).get('/api/dashboard');
@@ -195,7 +195,7 @@ describe('Middleware Pipeline Tests', () => {
         .send({ email: email, password: 'StudentPass123' });
 
       studentToken = login.body.token;
-    });
+    }, 30000);
 
     it('should deny admin panel access for student', async () => {
       const res = await request(app)

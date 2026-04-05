@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --detectOpenHandles --testTimeout=10000",
-    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/e2e.test.js --forceExit --testTimeout=10000",
-    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/middleware.test.js --forceExit --testTimeout=10000",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --detectOpenHandles",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/e2e.test.js --forceExit",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/middleware.test.js --forceExit",
     "test:all": "npm run test",
     "test:clean": "rm -f middleware.db && npm test",
     "lint": "eslint src/ --ext .js",

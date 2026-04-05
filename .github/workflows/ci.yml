@@ -69,14 +69,14 @@ jobs:
         continue-on-error: true
       
       - name: Run unit tests
-        run: npm run test -- tests/middleware.test.js --testTimeout=30000
+        run: npm run test -- tests/middleware.test.js
         env:
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
           JWT_SECRET: ci_test_secret_key_minimum_32_chars
       
       - name: Run E2E tests
-        run: npm run test:e2e -- --testTimeout=30000
+        run: npm run test:e2e
         env:
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
