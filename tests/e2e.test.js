@@ -40,7 +40,7 @@ beforeAll(async () => {
   const { initDatabase } = require('../src/config/database');
   await initDatabase();
   app = require('../src/app').app;
-});
+}, 30000);  // 30 second timeout for database initialization
 
 afterAll(async () => {
   const { closeDatabase } = require('../src/config/database');

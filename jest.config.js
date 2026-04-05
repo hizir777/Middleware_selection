@@ -1,7 +1,7 @@
 export default {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.js'],
-  testTimeout: 10000,  // 10 seconds per test
+  testTimeout: 30000,  // 30 seconds per test (sql.js initialization needs time)
   forceExit: true,
   detectOpenHandles: true,
   verbose: true,
