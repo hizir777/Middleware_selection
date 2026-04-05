@@ -22,6 +22,30 @@ async function register(req, res, next) {
       });
     }
 
+    if (username.trim().length < 3) {
+      return res.status(HTTP.BAD_REQUEST).json({
+        success: false,
+        error: MESSAGES.GENERAL.VALIDATION_ERROR,
+        detail: 'Kullanıcı adı en az 3 karakter olmalıdır',
+      });
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+      return res.status(HTTP.BAD_REQUEST).json({
+        success: false,
+        error: MESSAGES.GENERAL.VALIDATION_ERROR,
+        detail: 'Geçerli bir email adresi giriniz',
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(HTTP.BAD_REQUEST).json({
+        success: false,
+        error: MESSAGES.GENERAL.VALIDATION_ERROR,
+        detail: 'Şifre en az 6 karakter olmalıdır',
+      });
+    }
+
     const result = await authService.register({ username, email, password, role }, req);
 
     if (!result.success) {

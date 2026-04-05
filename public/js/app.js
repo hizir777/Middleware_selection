@@ -88,6 +88,21 @@ async function handleRegister() {
     return;
   }
 
+  if (username.trim().length < 3) {
+    showNotification('Kullanıcı adı en az 3 karakter olmalıdır', 'warning');
+    return;
+  }
+
+  if (!email.includes('@') || !email.includes('.')) {
+    showNotification('Geçerli bir email adresi giriniz', 'warning');
+    return;
+  }
+
+  if (password.length < 6) {
+    showNotification('Şifre en az 6 karakter olmalıdır', 'warning');
+    return;
+  }
+
   try {
     const res = await apiRequest('POST', '/auth/register', { username, email, password, role });
     if (res.success) {
@@ -136,7 +151,7 @@ async function handleLogin() {
 async function handleLogout() {
   try {
     await apiRequest('POST', '/auth/logout');
-  } catch {}
+  } catch { }
 
   authToken = null;
   currentUser = null;
