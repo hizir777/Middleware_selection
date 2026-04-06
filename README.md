@@ -17,7 +17,7 @@
 Proje altyapısı, güvenlik hiyerarşisi ve gerçek zamanlı izleme panelinin kapsamlı demosu:
 
 1) *Tam haliyle youtube test videosu için:*
-https://youtu.be/WRyvFiTWzvM
+https://youtu.be/KEuG1uYG868
 
 ![Project Demo](demo/project-demo.webp)
 
