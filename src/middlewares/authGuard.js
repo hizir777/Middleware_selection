@@ -21,8 +21,19 @@ const logger = require('../utils/logger');
 const { logSecurityEvent, AUDIT_EVENTS } = require('../services/auditService');
 
 /**
- * Auth Guard — JWT + Revocation + Fingerprint kontrolü.
- * Korumalı rotalarda kullanılır.
+ * Factory function that returns the Authentication Guard middleware.
+ * This middleware sits in front of protected routes and ensures that:
+ * 1. A valid JWT token is present in the Authorization header.
+ * 2. The token has not been tampered with and hasn't expired.
+ * 3. The token hasn't been explicitly revoked (e.g., after a logout or password change).
+ * 4. The client's fingerprint matches the fingerprint stored when the token was originally issued.
+ * 
+ * By placing this after rate-limiting but before resource-intensive handlers, 
+ * we form a robust "Cheap Check First" security perimeter.
+ * 
+ * TODO: Consider separating the fingerprint verification into its own optional middleware for finer control.
+ * 
+ * @returns {Function} Express middleware function handling authentication securely.
  */
 function authGuard() {
   return async (req, res, next) => {

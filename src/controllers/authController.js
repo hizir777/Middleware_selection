@@ -7,7 +7,18 @@ const HTTP = require('../constants/httpCodes');
 const MESSAGES = require('../constants/messages');
 
 /**
- * POST /api/auth/register
+ * Handles new user registration.
+ * Performs basic validation on the request body (username, email, password length).
+ * If validation passes, delegates creation to the authService.
+ * Returns the created user object upon success.
+ * 
+ * TODO: Extract inline validations to a separate validation middleware (e.g., using Joi or Express-Validator) 
+ * to keep the controller lean and improve reusability.
+ * 
+ * @param {import('express').Request} req - The Express request object containing user details in req.body.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The next middleware function in the stack.
+ * @returns {Promise<Object>} JSON response containing success status, message, and created user.
  */
 async function register(req, res, next) {
   try {
@@ -66,7 +77,16 @@ async function register(req, res, next) {
 }
 
 /**
- * POST /api/auth/login
+ * Handles user login and session initialization.
+ * Validates the presence of email and password credentials.
+ * If credentials are correct, returns a JWT token for subsequent authenticated requests.
+ * 
+ * FIXME: Consider implementing account lockout after consecutive failed login attempts to prevent brute force attacks.
+ * 
+ * @param {import('express').Request} req - The Express request object containing login credentials.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The next middleware function.
+ * @returns {Promise<Object>} JSON response with authentication token and user data.
  */
 async function login(req, res, next) {
   try {
@@ -101,7 +121,14 @@ async function login(req, res, next) {
 }
 
 /**
- * POST /api/auth/logout
+ * Handles user logout by revoking the current active JWT token.
+ * Extracts the token provided by the authGuard middleware and marks it as revoked in Redis.
+ * This ensures the token cannot be reused even before its natural expiration.
+ * 
+ * @param {import('express').Request} req - The Express request object, must contain req.token from authGuard.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The next middleware function.
+ * @returns {Promise<Object>} JSON response confirming successful logout.
  */
 async function logout(req, res, next) {
   try {
@@ -119,7 +146,16 @@ async function logout(req, res, next) {
 }
 
 /**
- * POST /api/auth/change-password
+ * Handles password change requests for currently authenticated users.
+ * Requires the old password for verification and a new password adhering to length rules.
+ * Automatically invalidates active sessions (revokes current token) upon successful change.
+ * 
+ * TODO: Enforce stricter password complexity requirements (e.g., symbols, numbers) in a separate validation layer.
+ * 
+ * @param {import('express').Request} req - The Express request object containing req.user (from authGuard) and body.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The next middleware function.
+ * @returns {Promise<Object>} JSON response indicating success or failure.
  */
 async function changePassword(req, res, next) {
   try {
