@@ -28,7 +28,7 @@
     "redis",
     "express"
   ],
-  "author": "Öğrenci Adı Soyadı",
+  "author": "Can Ekizoğlu",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",

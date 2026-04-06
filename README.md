@@ -6,10 +6,10 @@
 ![Security](https://img.shields.io/badge/Security-High-success?style=for-the-badge&logo=springsecurity)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-> **Üniversite:** *[Üniversite Adını Buraya Giriniz]* 🏛️  
-> **Bölüm/Ders:** *[Dersin Adını Buraya Giriniz]* 📚  
-> **Danışman / Eğitmen:** *[Hocanızın Unvanı ve Adı]* 🧑‍🏫  
-> **Geliştirici:** *[Adınız Soyadınız - Öğrenci Numaranız]* 💻  
+> **Üniversite:** *İstinye Üniversitesi* 🏛️  
+> **Bölüm/Ders:** *Bilişim Güvenliği Teknolojisi* 📚  
+> **Danışman / Eğitmen:** *Keyvan Arasteh* 🧑‍🏫  
+> **Geliştirici:** *Can Ekizoğlu* 💻  
 
 ---
 
