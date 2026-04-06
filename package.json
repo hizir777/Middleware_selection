@@ -28,7 +28,7 @@
     "redis",
     "express"
   ],
-  "author": "",
+  "author": "Öğrenci Adı Soyadı",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",

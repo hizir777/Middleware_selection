@@ -1,5 +1,16 @@
 # 🎓 Middleware Selection — Güvenli Web Geliştirme Vize Projesi
 
+<!-- PROFESYONEL REPO ROZETLERİ (BADGES) -->
+![NodeJS](https://img.shields.io/badge/Node.js-v20-green?style=for-the-badge&logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-v4.21-lightgrey?style=for-the-badge&logo=express)
+![Security](https://img.shields.io/badge/Security-High-success?style=for-the-badge&logo=springsecurity)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+
+> **Üniversite:** *[Üniversite Adını Buraya Giriniz]* 🏛️  
+> **Bölüm/Ders:** *[Dersin Adını Buraya Giriniz]* 📚  
+> **Danışman / Eğitmen:** *[Hocanızın Unvanı ve Adı]* 🧑‍🏫  
+> **Geliştirici:** *[Adınız Soyadınız - Öğrenci Numaranız]* 💻  
+
 ---
 
 ## ⚡ TL;DR — 3 Komutla Başlangıç (Docker'sız)
