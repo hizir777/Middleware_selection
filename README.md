@@ -13,6 +13,22 @@
 
 ---
 
+## 🎬 Demo
+
+Proje altyapısı, güvenlik hiyerarşisi ve gerçek zamanlı izleme panelinin kapsamlı demosu.
+
+![Project Demo](demo/project_demo.webp)
+
+> [!TIP]
+> **Demoda neler var?**
+> 1. **Otomatik Dağıtım**: `docker-compose` ile servislerin ayağa kaldırılması.
+> 2. **Pipeline Görselleştirme**: "Cheap Check First" mimarisinin detaylı incelenmesi.
+> 3. **Canlı Saldırı Simülasyonu**: Gerçek zamanlı Rate Limiting (429 hataları) ve Audit Logging.
+> 4. **Sistem Durumu**: Redis ve Uygulama bağlantılarının anlık takibi.
+
+---
+
+
 ## ⚡ TL;DR — 3 Komutla Başlangıç (Docker'sız)
 
 ```bash
@@ -101,6 +117,21 @@ Eğer Auth (JWT doğrulama) Rate Limiter'dan **önce** gelirse:
 | **bcryptjs** | Kasıtlı yavaş parola hash — brute-force koruması |
 | **Winston** | Yapılandırılmış log sistemi (console + dosya) |
 | **Docker** | Tek komutla çalışan konteyner orkestrasyonu |
+
+---
+
+## 🏗️ Altyapı ve Servisler (Docker Compose)
+
+Proje, birbirine bağlı ve izole iki ana servisten oluşur (`docker-compose.yml`):
+
+1.  **`mw_app` (Uygulama Sunucusu)**:
+    *   **Rol**: Ana iş mantığı, Middleware Pipeline ve Dashboard'u sunar.
+    *   **Teknoloji**: Node.js 20 - Alpine (Hafif ve güvenli).
+    *   **Bağımlılık**: Redis servisinin "Healthy" (sağlıklı) olmasını bekler.
+2.  **`mw_redis` (Veri Deposu)**:
+    *   **Rol**: Rate Limiting sayaçlarını ve iptal edilen (revoked) JWT token'larını saklar.
+    *   **Performans**: ~0.1ms erişim süresiyle pipeline'ın en hızlı katmanını besler.
+    *   **Kalıcılık**: `redis_data` volume'u ile veriler konteyner silinse dahi korunur.
 
 ---
 
