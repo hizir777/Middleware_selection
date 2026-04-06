@@ -14,10 +14,12 @@
 ---
 
 ## 🎬 Demo
+Proje altyapısı, güvenlik hiyerarşisi ve gerçek zamanlı izleme panelinin kapsamlı demosu:
 
-Proje altyapısı, güvenlik hiyerarşisi ve gerçek zamanlı izleme panelinin kapsamlı demosu.
+1) *Tam haliyle youtube test videosu için:*
+https://youtu.be/WRyvFiTWzvM
 
-![Project Demo](demo/project_demo.webp)
+![Project Demo](demo/project-demo.webp)
 
 > [!TIP]
 > **Demoda neler var?**
