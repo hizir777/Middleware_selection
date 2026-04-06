@@ -16,7 +16,7 @@
 ## 🎬 Demo
 Proje altyapısı, güvenlik hiyerarşisi ve gerçek zamanlı izleme panelinin kapsamlı demosu:
 
-1) *Tam haliyle youtube test videosu için:*
+1) *Uzun haliyle youtube test videosu için:*
 https://youtu.be/KEuG1uYG868
 
 ![Project Demo](demo/project-demo.webp)
@@ -421,64 +421,52 @@ npm run performance:test
 
 ```text
 ├── .github/workflows/ci.yml     # GitHub Actions CI/CD (Lint, Test, Build, Deploy)
+├── demo/                         # Görsel Demolar ve Çıktılar
 ├── docs/                         # Dokümantasyon
+│   ├── API_REFERENCE.md         # Teknik API Referansı ⭐ YENİ
 │   ├── architecture.md          # Pipeline diyagramları
-│   ├── DATABASE_SCHEMA.md       # Schema, indexes, queries
-│   └── img/                     # Diyagram görselleri
-├── public/                      # Frontend Dashboard
+│   ├── DATABASE_SCHEMA.md       # Şema ve İndeksler
+│   ├── TEST_GUIDE.md            # Test Koşum Rehberi
+│   └── img/                     # Diyagram ve Ekran Görüntüleri
+├── logs/                         # Uygulama Kayıtları (Audit & Error)
+├── public/                      # Frontend Dashboard (Glassmorphism)
 │   ├── css/style.css
 │   ├── js/app.js
 │   └── index.html
-├── scripts/                     # Test & Simülasyon
-│   ├── attack_simulation.js     # Rate Limiter testi
-│   ├── session_test.js          # Token revocation testi
-│   ├── hierarchy_test.js        # Pipeline izolasyon testi
-│   └── performance-test.js      # Load testing
-├── src/                         # Uygulama Kodu
-│   ├── app.js                   # Express app + middleware pipeline
-│   ├── config/
-│   │   ├── database.js          # SQLite config
-│   │   ├── redis.js             # Redis client
-│   │   └── index.js
-│   ├── constants/
-│   │   ├── httpCodes.js         # HTTP status constants
-│   │   ├── messages.js          # Response messages (Turkish)
-│   │   └── roles.js             # User roles (student, editor, admin)
-│   ├── controllers/             # Request handlers
-│   │   ├── authController.js
-│   │   ├── dashboardController.js
-│   │   └── healthController.js
-│   ├── middlewares/             # "Cheap Check First" Pipeline
-│   │   ├── rateLimiter.js       # 🔴 1. Yunus Polisi
-│   │   ├── corsHandler.js       # 🟠 2. CORS
-│   │   ├── logger.js            # 🟡 3. Kamera
-│   │   ├── authGuard.js         # 🟢 4. Polis (JWT)
-│   │   ├── rbacGuard.js         # 🔵 5. Zabıta (Roles)
-│   │   └── errorHandler.js      # 🟣 Global Error Handler
-│   ├── routes/                  # API Endpointleri
-│   │   └── index.js
-│   ├── services/                # Business Logic
-│   │   ├── authService.js       # Register, Login, Logout
-│   │   ├── tokenService.js      # JWT, Revocation
-│   │   └── auditService.js      # Logging, Telegram alerts
-│   └── utils/
-│       ├── fingerprint.js       # Device fingerprinting
-│       ├── logger.js            # Winston logging
-│       └── telegram.js          # Telegram notifications
-├── tests/                       # Test Suite
-│   ├── middleware.test.js       # Unit tests
-│   └── e2e.test.js              # End-to-end tests
-├── SECURITY.md                  # Güvenlik Rehberi ⭐
-├── DEPLOYMENT.md                # Deployment Rehberi ⭐
-├── TROUBLESHOOTING.md           # FAQ ⭐
-├── PERFORMANCE.md               # Optimization Guide ⭐
-├── Roadmap.md                   # Proje planı (Uptime Kuma + Vize)
-├── CHANGELOG.md                 # Sürüm notları
-├── Dockerfile                   # Multi-stage build
-├── docker-compose.yml           # Redis + App services
-├── .env.example                 # Secrets template
-├── package.json                 # Dependencies
-└── README.md                    # Bu dosya
+├── scripts/                     # Test & Simülasyon Betikleri
+│   ├── attack_simulation.js     # Rate Limiter Testi
+│   ├── session_test.js          # Token Revocation Testi
+│   ├── hierarchy_test.js        # Pipeline İzolasyon Testi
+│   └── performance-test.js      # Load Testing (yük testi)
+├── src/                         # Uygulama Ana Kodları
+│   ├── app.js                   # Express Uygulama Girişi
+│   ├── config/                  # DB ve Redis Yapılandırması
+│   ├── constants/               # HTTP Kodları ve Mesajlar
+│   ├── controllers/             # İstek İşleyiciler (Handlers)
+│   ├── middlewares/             # "Cheap Check First" Pipeline Bileşenleri
+│   ├── routes/                  # API Yönlendirme (Routing)
+│   ├── services/                # İş Mantığı (Business Logic)
+│   └── utils/                   # Yardımcı Fonksiyonlar (Fingerprint, Logger)
+├── tests/                       # Test Suite (Jest & Supertest)
+│   ├── middleware.test.js       # Birim Testler
+│   └── e2e.test.js              # Uçtan Uca (E2E) Testler
+├── vize_on_gereksinimi/         # Proje Ön Analiz Raporları
+├── .dockerignore                # Docker İndeks Dışı Dosyalar
+├── .env.example                 # Ortam Değişkeni Şablonu
+├── CHANGELOG.md                 # Sürüm Geçmişi
+├── CODE_OF_CONDUCT.md           # Topluluk Kuralları ⭐ YENİ
+├── CONTRIBUTING.md              # Katkı Sağlama Rehberi ⭐ YENİ
+├── DEPLOYMENT.md                # Dağıtım Rehberi
+├── Dockerfile                   # Multi-stage Docker Yapılandırması
+├── docker-compose.yml           # Redis + App Orkestrasyonu
+├── jest.config.js               # Test Konfigürasyonu
+├── LICENSE                      # MIT Lisansı
+├── package.json                 # Bağımlılıklar ve Komutlar
+├── PERFORMANCE.md               # Optimizasyon ve Benchmark
+├── README.md                    # Bu dosya
+├── Roadmap.md                   # Yol Haritası ve Planlama
+├── SECURITY.md                  # Güvenlik Politikası
+└── TROUBLESHOOTING.md           # Sorun Giderme Rehberi
 ```
 
 ---
