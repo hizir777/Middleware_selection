@@ -6,51 +6,40 @@ const authService = require('../services/authService');
 const HTTP = require('../constants/httpCodes');
 const MESSAGES = require('../constants/messages');
 
+function validateRegister(username, email, password) {
+  if (!username || !email || !password) {
+    return { error: 'username, email ve password alanları zorunludur' };
+  }
+  if (username.trim().length < 3) {
+    return { error: 'Kullanıcı adı en az 3 karakter olmalıdır' };
+  }
+  if (!email.includes('@') || !email.includes('.')) {
+    return { error: 'Geçerli bir email adresi giriniz' };
+  }
+  if (password.length < 6) {
+    return { error: 'Şifre en az 6 karakter olmalıdır' };
+  }
+  return { success: true };
+}
+
 /**
  * Handles new user registration.
- * Performs basic validation on the request body (username, email, password length).
- * If validation passes, delegates creation to the authService.
- * Returns the created user object upon success.
+ * Performs basic validation on the request body.
  * 
- * @param {import('express').Request} req - The Express request object containing user details in req.body.
+ * @param {import('express').Request} req - The Express request object.
  * @param {import('express').Response} res - The Express response object.
- * @param {import('express').NextFunction} next - The next middleware function in the stack.
- * @returns {Promise<Object>} JSON response containing success status, message, and created user.
+ * @param {import('express').NextFunction} next - The next middleware function.
  */
 async function register(req, res, next) {
   try {
     const { username, email, password, role } = req.body;
 
-    // Basit validasyon
-    if (!username || !email || !password) {
+    const validation = validateRegister(username, email, password);
+    if (validation.error) {
       return res.status(HTTP.BAD_REQUEST).json({
         success: false,
         error: MESSAGES.GENERAL.VALIDATION_ERROR,
-        detail: 'username, email ve password alanları zorunludur',
-      });
-    }
-
-    if (username.trim().length < 3) {
-      return res.status(HTTP.BAD_REQUEST).json({
-        success: false,
-        error: MESSAGES.GENERAL.VALIDATION_ERROR,
-        detail: 'Kullanıcı adı en az 3 karakter olmalıdır',
-      });
-    }
-
-    if (!email.includes('@') || !email.includes('.')) {
-      return res.status(HTTP.BAD_REQUEST).json({
-        success: false,
-        error: MESSAGES.GENERAL.VALIDATION_ERROR,
-        detail: 'Geçerli bir email adresi giriniz',
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(HTTP.BAD_REQUEST).json({
-        success: false,
-        error: MESSAGES.GENERAL.VALIDATION_ERROR,
-        detail: 'Şifre en az 6 karakter olmalıdır',
+        detail: validation.error,
       });
     }
 
