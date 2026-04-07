@@ -1,9 +1,19 @@
 // ═══════════════════════════════════════════════════
 // Audit Service — Güvenlik Günlüğü
 // ═══════════════════════════════════════════════════
-// Kritik olaylar (register, login, logout, password
-// change, yetki aşımı) kaydedilir ve Telegram ile
-// bildirim gönderilir.
+//
+// Tüm güvenlik olaylarını veritabanına kaydeder ve
+// isteğe bağlı olarak Telegram ile bildirim gönderir.
+//
+// Olay Tipleri (AUDIT_EVENTS):
+//   REGISTER, LOGIN, LOGOUT         — Normal akış
+//   LOGIN_FAILED, PERMISSION_DENIED — Başarısız işlemler
+//   SESSION_HIJACK_ATTEMPT          — Güvenlik ihlali
+//   PASSWORD_CHANGE, ROLE_CHANGE    — Hesap değişiklikleri
+//
+// Bağımlılıklar:
+//   database : audit_logs tablosuna INSERT
+//   telegram : Kritik olaylarda anlık uyarı
 // ═══════════════════════════════════════════════════
 
 const { execute, queryAll } = require('../config/database');

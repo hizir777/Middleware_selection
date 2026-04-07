@@ -1,10 +1,38 @@
 // ═══════════════════════════════════════════════════════
 // E2E Tests — End-to-End Middleware Selection
 // ═══════════════════════════════════════════════════════
+//
+// Bu test paketi, gerçek kullanıcı senaryolarını simüle eden
+// uçtan uca testleri içerir. Unit testlerin aksine, tüm
+// middleware katmanlarının birlikte doğru çalıştığını doğrular.
+//
+// Test Senaryoları:
+//   1. Tam kayıt → giriş → korumalı kaynak erişimi akışı
+//   2. Token bazlı yetkilendirme doğrulama (JWT lifecycle)
+//   3. Şifre değiştirme ve oturum geçersizleştirme
+//   4. Rate limiter'ın gerçek istek akışında davranışı
+//   5. Audit log oluşturma ve sorgulanabilirliği
+//   6. Logout sonrası token iptal kontrolü
+//
+// Test İzolasyonu:
+//   Her test grubu (describe) bağımsız kullanıcı hesabı kullanır.
+//   Timestamp tabanlı benzersiz email/username üretimi sayesinde
+//   testler paralel çalıştırılabilir.
+//
+// Performans Beklentileri:
+//   - Kayıt/giriş: < 500ms (bcrypt hash dahil)
+//   - Korumalı endpoint: < 100ms (JWT verify + DB sorgu)
+//   - Rate limit kontrol: < 10ms (Redis incr/expire)
+//
+// ═══════════════════════════════════════════════════════
 
 const request = require('supertest');
 
-// Mock Redis before app loads
+// ─── Redis Mock Konfigürasyonu ────────────────────
+// E2E testlerde de Redis bellek içi mock ile simüle edilir.
+// Bu dosyadaki mock, middleware.test.js'deki ile aynı API'yi
+// destekler ancak setex (TTL'li set) komutu da eklidir.
+// setex: Token blacklist'te TTL bazlı silme için kullanılır.
 jest.mock('ioredis', () => {
   const store = {};
   const sets = {};

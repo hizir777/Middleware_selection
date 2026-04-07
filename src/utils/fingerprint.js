@@ -1,10 +1,19 @@
 // ═══════════════════════════════════════════════════
 // Fingerprint — Cihaz Parmak İzi
 // ═══════════════════════════════════════════════════
-// IP + User-Agent + Screen Resolution verilerinden
-// benzersiz bir parmak izi oluşturur.
-// Oturum hırsızlığı (Session Hijacking) tespiti için
-// kullanılır.
+//
+// İstemci tarafında toplanan işaretleri birleştirerek
+// bir cihaza özgü SHA-256 karma değeri üretir.
+//
+// Kullanılan Sinyaller:
+//   ip_address       — IPv4/IPv6 adresi
+//   user_agent       — Tarayıcı/istemci kimliği
+//   screen_resolution— Ekran boyutu (X-Screen-Resolution)
+//
+// Session Hijacking Koruması:
+//   Giriş sırasında üretilen parmak izi token payload'ına
+//   eklenir. Her istekte authGuard bu değeri yeniden
+//   hesaplar ve karşılaştırır. Farklılık = hijack girişimi.
 // ═══════════════════════════════════════════════════
 
 const crypto = require('crypto');

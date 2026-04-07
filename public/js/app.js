@@ -1,7 +1,27 @@
 // ═══════════════════════════════════════════════════
 // Dashboard — Client-Side JavaScript
 // ═══════════════════════════════════════════════════
+//
+// Bu modül, Middleware Selection uygulamasının frontend
+// mantığını yönetir. Tek sayfa uygulama (SPA) mimarisi
+// kullanılarak aşağıdaki işlevler sağlanır:
+//
+//  - Kimlik doğrulama (kayıt, giriş, çıkış, şifre değişimi)
+//  - Gerçek zamanlı API test aracı
+//  - Rate limiter saldırı simülasyonu
+//  - Audit log görüntüleyici
+//  - Sistem sağlık durumu izleme
+//
+// State Yönetimi:
+//  Token ve kullanıcı bilgisi localStorage'da tutulur.
+//  Sayfa yenilendiğinde oturum kaybolmaz.
+//
+// Güvenlik:
+//  Tüm API isteklerinde Authorization: Bearer <token>
+//  başlığı otomatik olarak eklenir.
+// ═══════════════════════════════════════════════════
 
+/** Tüm API istekleri için temel URL öneki. */
 const API_BASE = '/api';
 
 // ─── State ──────────────────────────────────────
@@ -9,6 +29,8 @@ let authToken = localStorage.getItem('mw_token') || null;
 let currentUser = JSON.parse(localStorage.getItem('mw_user') || 'null');
 
 // ─── DOM Ready ──────────────────────────────────
+// DOMContentLoaded: HTML ayrıştırma tamamlandığında,
+// harici kaynaklar (resim, CSS) beklenmeden tetiklenir.
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initAuth();
@@ -25,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // Navigation
 // ═══════════════════════════════════════════════════
 
+/**
+ * Kenar çubuğu navigasyon öğelerini başlatır.
+ * Her nav öğesine tıklama olay dinleyicisi ekler.
+ * Aktif sekmeye göre ilgili içerik bölümünü gösterir.
+ */
 function initNavigation() {
   const navItems = document.querySelectorAll('.nav-item');
 
@@ -51,6 +78,10 @@ function initNavigation() {
   });
 }
 
+/**
+ * Sayfa başlığını ve alt başlığını aktif bölüme göre günceller.
+ * @param {string} section - Aktif bölümün data-section değeri
+ */
 function updateHeader(section) {
   const headers = {
     'auth-section': { title: 'Kimlik Doğrulama', subtitle: 'Kayıt olun veya giriş yapın' },
@@ -70,6 +101,11 @@ function updateHeader(section) {
 // Auth
 // ═══════════════════════════════════════════════════
 
+/**
+ * Kimlik doğrulama formu düğmelerini başlatır.
+ * Kayıt, giriş, çıkış ve şifre değiştirme işleyicilerini
+ * ilgili düğmelere bağlar.
+ */
 function initAuth() {
   document.getElementById('btn-register').addEventListener('click', handleRegister);
   document.getElementById('btn-login').addEventListener('click', handleLogin);
@@ -77,6 +113,13 @@ function initAuth() {
   document.getElementById('btn-change-password').addEventListener('click', handleChangePassword);
 }
 
+/**
+ * Kullanıcı kayıt formunu işler.
+ * Girdi doğrulaması yapar (uzunluk, email format),
+ * doğrulama geçerse /api/auth/register endpoint'ine POST gönderir.
+ * Başarılı kayıt sonrası formu temizler ve bildirim gösterir.
+ * @returns {Promise<void>}
+ */
 async function handleRegister() {
   const username = document.getElementById('reg-username').value.trim();
   const email = document.getElementById('reg-email').value.trim();
@@ -119,6 +162,12 @@ async function handleRegister() {
   }
 }
 
+/**
+ * Kullanıcı giriş formunu işler.
+ * Başarılı girişte JWT token ve kullanıcı bilgisini
+ * localStorage'a kaydeder, UI'ı günceller.
+ * @returns {Promise<void>}
+ */
 async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -148,6 +197,12 @@ async function handleLogin() {
   }
 }
 
+/**
+ * Kullanıcı oturumunu sonlandırır.
+ * Sunucuya logout isteği gönderir (token sunucu tarafında iptal edilir),
+ * ardından localStorage'dan token ve kullanıcı bilgisini siler.
+ * @returns {Promise<void>}
+ */
 async function handleLogout() {
   try {
     await apiRequest('POST', '/auth/logout');
@@ -161,6 +216,13 @@ async function handleLogout() {
   showNotification('👋 Çıkış yapıldı', 'info');
 }
 
+/**
+ * Şifre değiştirme işlemini yönetir.
+ * Başarılı değişimde mevcut token geçersiz kılınır ve
+ * kullanıcı otomatik olarak çıkış yapılmış duruma getirilir.
+ * (Sunucu tüm aktif oturumları iptal eder.)
+ * @returns {Promise<void>}
+ */
 async function handleChangePassword() {
   const oldPassword = document.getElementById('old-password').value;
   const newPassword = document.getElementById('new-password').value;
@@ -190,6 +252,11 @@ async function handleChangePassword() {
   }
 }
 
+/**
+ * Kullanıcı arayüzünü mevcut oturum durumuna göre günceller.
+ * Oturum açıksa kullanıcı adı, rolü ve avatar harfini gösterir.
+ * Oturum kapalıysa misafir görünümüne döner.
+ */
 function updateUserUI() {
   const nameEl = document.getElementById('user-name');
   const roleEl = document.getElementById('user-role');
@@ -213,10 +280,20 @@ function updateUserUI() {
 // API Test
 // ═══════════════════════════════════════════════════
 
+/**
+ * API test bölümünü başlatır.
+ * "Gönder" düğmesine tıklama işleyicisini bağlar.
+ */
 function initApiTest() {
   document.getElementById('btn-test-api').addEventListener('click', handleApiTest);
 }
 
+/**
+ * Seçilen method ve endpoint'e test isteği gönderir.
+ * Yanıt durum kodu, süresi, Request ID ve rate limit bilgilerini
+ * gerçek zamanlı olarak ekranda gösterir.
+ * @returns {Promise<void>}
+ */
 async function handleApiTest() {
   const method = document.getElementById('test-method').value;
   const endpoint = document.getElementById('test-endpoint').value;
@@ -281,10 +358,21 @@ async function handleApiTest() {
 // Attack Simulation
 // ═══════════════════════════════════════════════════
 
+/**
+ * Saldırı simülasyonu bölümünü başlatır.
+ * "Saldırıyı Başlat" düğmesine işleyici bağlar.
+ */
 function initAttackSimulation() {
   document.getElementById('btn-start-attack').addEventListener('click', handleAttack);
 }
 
+/**
+ * Rate limiter stres testini çalıştırır.
+ * Belirtilen endpoint'e art arda istek göndererek
+ * kaç tanesinin başarılı geçtiğini, kaç tanesinin
+ * 429 ile engellendiğini istatistiksel olarak gösterir.
+ * @returns {Promise<void>}
+ */
 async function handleAttack() {
   const target = document.getElementById('attack-target').value;
   const count = parseInt(document.getElementById('attack-count').value, 10) || 20;
@@ -382,6 +470,11 @@ async function handleAttack() {
 
 document.getElementById('btn-refresh-audit')?.addEventListener('click', loadAuditLogs);
 
+/**
+ * Güvenlik olay loglarını sunucudan yükler ve tabloya render eder.
+ * Kimlik doğrulaması gerektirir; token yoksa uyarı gösterilir.
+ * @returns {Promise<void>}
+ */
 async function loadAuditLogs() {
   if (!authToken) {
     document.getElementById('audit-tbody').innerHTML = `
@@ -421,6 +514,12 @@ async function loadAuditLogs() {
   }
 }
 
+/**
+ * Olay tipine göre renklendirilmiş HTML badge oluşturur.
+ * Bilinmeyen olay tipleri için varsayılan gri badge döndürür.
+ * @param {string} action - Audit log olay tipi (ör. 'LOGIN', 'LOGIN_FAILED')
+ * @returns {string} Renkli badge HTML string'i
+ */
 function getEventBadge(action) {
   const badges = {
     'REGISTER': '<span class="badge badge-success">KAYIT</span>',
@@ -441,6 +540,13 @@ function getEventBadge(action) {
 // Health Check
 // ═══════════════════════════════════════════════════
 
+/**
+ * Sunucu sağlık durumunu kontrol eder ve UI'ı günceller.
+ * /api/health endpoint'ini sorgular; uygulama ve Redis
+ * servislerinin durumunu ayrı kartlarda gösterir.
+ * Her 30 saniyede bir otomatik olarak çalışır.
+ * @returns {Promise<void>}
+ */
 async function checkServerHealth() {
   try {
     const res = await fetch('/api/health');
@@ -476,6 +582,12 @@ async function checkServerHealth() {
   }
 }
 
+/**
+ * Tek bir sağlık servis kartını günceller.
+ * @param {string} prefix - DOM element ID öneki (ör. 'health-redis')
+ * @param {string} status - Servis durumu ('healthy' veya başka değer)
+ * @param {string} label  - İnsan okunur servis adı
+ */
 function updateHealthCard(prefix, status, label) {
   const statusEl = document.getElementById(`${prefix}-status`);
   const detailEl = document.getElementById(`${prefix}-detail`);
@@ -497,6 +609,14 @@ function updateHealthCard(prefix, status, label) {
 // Helpers
 // ═══════════════════════════════════════════════════
 
+/**
+ * Merkezi API istek yardımcısı.
+ * Authorization başlığını otomatik ekler, JSON döndürür.
+ * @param {string} method - HTTP metodu (GET, POST, PUT, DELETE)
+ * @param {string} path   - API yolu (ör. '/auth/login')
+ * @param {Object|null} body - İstek gövdesi (POST/PUT için)
+ * @returns {Promise<Object>} Sunucu JSON yanıtı
+ */
 async function apiRequest(method, path, body = null) {
   const headers = {
     'Content-Type': 'application/json',
@@ -516,6 +636,12 @@ async function apiRequest(method, path, body = null) {
   return res.json();
 }
 
+/**
+ * Ekranın sağ alt köşesinde geçici bildirim gösterir.
+ * 4 saniye sonra otomatik olarak kaybolur.
+ * @param {string} message - Gösterilecek mesaj metni
+ * @param {'success'|'error'|'warning'|'info'} type - Bildirim tipi
+ */
 function showNotification(message, type = 'info') {
   const el = document.getElementById('notification');
   const iconEl = document.getElementById('notification-icon');
@@ -545,6 +671,11 @@ function showNotification(message, type = 'info') {
   }, 4000);
 }
 
+/**
+ * ISO 8601 tarih string'ini Türkçe yerel formata dönüştürür.
+ * @param {string|null} iso - ISO 8601 tarih string'i (ör. '2024-01-15T10:30:00Z')
+ * @returns {string} Yerel formatlı tarih veya '-' (null/undefined için)
+ */
 function formatDate(iso) {
   if (!iso) return '-';
   const d = new Date(iso);
@@ -558,6 +689,12 @@ function formatDate(iso) {
   });
 }
 
+/**
+ * Saniye cinsinden çalışma süresini okunabilir formata çevirir.
+ * Örnek: 3661 → "1s 1dk 1sn"
+ * @param {number} seconds - Saniye cinsinden uptime değeri
+ * @returns {string} Biçimlendirilmiş süre metni
+ */
 function formatUptime(seconds) {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);

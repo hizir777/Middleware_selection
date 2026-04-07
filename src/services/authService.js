@@ -1,8 +1,26 @@
 // ═══════════════════════════════════════════════════
 // Auth Service — Kimlik Doğrulama İş Mantığı
 // ═══════════════════════════════════════════════════
-// Register, Login, Logout, Change Password işlemleri.
-// bcryptjs ile güvenli parola yönetimi.
+//
+// Tüm kimlik doğrulama işlemlerinin merkezi iş katmanı.
+// Controller'lardan çağrılır; HTTP'den bağımsızdır.
+//
+// İşlemler:
+//   register()       — Yeni kullanıcı oluşturma
+//   login()          — Kimlik doğrulama ve JWT üretimi
+//   logout()         — Token iptal ve oturum kapatma
+//   changePassword() — Şifre değiştirme (tüm oturumları iptal eder)
+//
+// Güvenlik Önlemleri:
+//   - bcryptjs (SALT_ROUNDS=10): şifre hash'leme
+//   - Sabit süreli yanıt: timing saldırı önleme
+//   - Audit log: tüm kritik olaylar kaydedilir
+//   - Token revocation: logout sonrası token geçersiz kılma
+//
+// Bağımlılıklar:
+//   - database : SQLite sorguları (queryOne, execute)
+//   - tokenService: JWT oluşturma/doğrulama
+//   - auditService: Güvenlik olay loglama
 // ═══════════════════════════════════════════════════
 
 const bcrypt = require('bcryptjs');

@@ -1,6 +1,24 @@
 // ═══════════════════════════════════════════════════
 // Auth Controller — Kimlik Doğrulama Rotaları
 // ═══════════════════════════════════════════════════
+//
+// Bu controller, HTTP katmanı ile iş mantığı (authService)
+// arasındaki köprüdür. Sorumlulukları:
+//   1. İstek gövdesini doğrulama (validateRegister/validateLogin)
+//   2. authService'i çağırma
+//   3. Uygun HTTP yanıt kodu ile dönüş yapma
+//
+// Controller'lar iş mantığı içermez; sadece:
+//   - HTTP girdi dönüşümü (req.body → service parametresi)
+//   - HTTP çıktı dönüşümü (service sonucu → res.json)
+//   - Hata yakalama (try/catch → HTTP 500)
+//
+// Endpoint Listesi:
+//   POST /api/auth/register      → register()
+//   POST /api/auth/login         → login()
+//   POST /api/auth/logout        → logout()
+//   POST /api/auth/change-password → changePassword()
+// ═══════════════════════════════════════════════════
 
 const authService = require('../services/authService');
 const HTTP = require('../constants/httpCodes');

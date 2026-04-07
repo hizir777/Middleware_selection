@@ -1,14 +1,24 @@
 // ═══════════════════════════════════════════════════
 // Config — Merkezi Konfigürasyon Yönetimi
 // ═══════════════════════════════════════════════════
-// Tüm çevre değişkenleri buradan okunur ve export edilir.
-// .env dosyası yoksa varsayılan değerler kullanılır.
+//
+// Tüm ortam değişkenleri buradan okunur, tip dönüşümü
+// yapılır ve varsayılan değerler atanır.
+//
+// Konfigürasyon Kategorileri:
+//   Sunucu  : PORT, NODE_ENV
+//   Auth    : JWT_SECRET, JWT_EXPIRES_IN, BCRYPT_ROUNDS
+//   Redis   : REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+//   Database: DB_PATH (SQLite dosya yolu)
+//   Telegram: BOT_TOKEN, CHAT_ID (opsiyonel)
 // ═══════════════════════════════════════════════════
 
 const dotenv = require('dotenv');
 const path = require('path');
 
-// .env dosyasını yükle (proje kök dizininden)
+// .env dosyasını yükle (proje kök dizininden).
+// Dosya yoksa hata vermez; process.env değerleri kullanılır.
+// CI/CD ortamında değerler doğrudan ortam değişkeni olarak enjekte edilir.
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const config = {

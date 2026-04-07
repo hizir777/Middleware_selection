@@ -127,7 +127,7 @@ async function startServer() {
     // SQLite veritabanı başlatma (sql.js — async WASM yükleme)
     await initDatabase();
 
-    // TODO: Production ortamında HTTPS SSL/TLS sertifika yapılandırması ekle.
+    // NOT: Production ortamında HTTPS SSL/TLS sertifika yapılandırması gereklidir.
     // Şu an Express sadece HTTP üzerinden çalışıyor, load balancer tarafında TLS yapıldı varsayılıyor.
 
     // HTTP sunucusu
