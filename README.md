@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="docs\img\istinye_logo.svg" alt="İstinye Üniversitesi Logo" width="200" />
+</div>
+
 # 🎓 Middleware Selection — Güvenli Web Geliştirme Vize Projesi
 
 <!-- PROFESYONEL REPO ROZETLERİ (BADGES) -->
