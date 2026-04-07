@@ -1,8 +1,21 @@
 // ═══════════════════════════════════════════════════
 // Token Service — JWT Yönetimi & Revocation
 // ═══════════════════════════════════════════════════
-// Token oluşturma, doğrulama ve Redis üzerinden
-// anlık iptal (revocation) mekanizması.
+//
+// JWT token yaşam döngüsünü yöneten servis.
+//
+// Token Yapısı (Payload):
+//   sub   : Kullanıcı ID'si
+//   jti   : Benzersiz token kimliği (revocation için)
+//   role  : Kullanıcı rolü (RBAC kontrolü için cache)
+//   iat   : Token üretim zamanı
+//   exp   : Token geçerlilik bitiş zamanı
+//
+// Revocation Mekanizması:
+//   Logout veya şifre değişikliğinde token'ın jti değeri
+//   Redis'e 'revoked:{jti}' şeklinde yazılır.
+//   authGuard her istekte bu listeyi kontrol eder.
+//   Redis key TTL = JWT TTL (otomatik temizlenir).
 // ═══════════════════════════════════════════════════
 
 const jwt = require('jsonwebtoken');

@@ -1,8 +1,33 @@
 // ═══════════════════════════════════════════════════
 // Routes — API Rota Tanımları
 // ═══════════════════════════════════════════════════
-// Middleware zinciri burada rotalarla eşleştirilir.
-// Auth ve RBAC guard'ları rota bazlı uygulanır.
+//
+// Tüm API endpoint'lerinin merkezi tanımlandığı dosya.
+// Middleware zinciri (authGuard + rbacGuard) burada
+// rota bazlı olarak uygulanır.
+//
+// Rota Koruma Katmanları:
+//   1. authGuard()        — JWT doğrulama + token revocation
+//   2. rbacGuard(ROLES.X) — Minimum gerekli rol kontrolü
+//
+// Rota Kategorileri:
+//   Genel (public):
+//     GET  /health               — Sağlık kontrolü (probe)
+//     POST /auth/register        — Yeni kullanıcı kaydı
+//     POST /auth/login           — Giriş ve JWT üretimi
+//
+//   Korumalı (authGuard gerekli):
+//     POST /auth/logout          — Oturum kapatma
+//     POST /auth/change-password — Şifre değiştirme
+//
+//   Rol bazlı (authGuard + rbacGuard):
+//     GET  /dashboard            — STUDENT+ erişimi
+//     GET  /editor/content       — EDITOR+ erişimi
+//     GET  /admin/panel          — Sadece ADMIN
+//     GET  /audit-logs           — Sadece ADMIN
+//     PUT  /admin/users/:id/role — Sadece ADMIN
+//
+// RBAC Hiyerarşisi: ADMIN > EDITOR > STUDENT
 // ═══════════════════════════════════════════════════
 
 const { Router } = require('express');

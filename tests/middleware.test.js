@@ -1,10 +1,42 @@
 // ═══════════════════════════════════════════════════
 // Middleware Tests — Unit & Integration
 // ═══════════════════════════════════════════════════
+//
+// Bu test dosyası, middleware pipeline'ının tüm katmanlarını
+// uçtan uca (end-to-end) test eder. Testler şu başlıklar
+// altında organize edilmiştir:
+//
+//  1. Sağlık Kontrol Endpoint'i (/api/health)
+//  2. Kimlik Doğrulama — Kayıt (/api/auth/register)
+//  3. Kimlik Doğrulama — Giriş (/api/auth/login)
+//  4. Korumalı Endpoint Erişimi (Authorization: Bearer)
+//  5. Rate Limiter Davranışı (429 yanıt kontrolü)
+//  6. Oturum Kapatma (/api/auth/logout)
+//
+// Test Ortamı:
+//   Jest + Supertest kombinasyonu kullanılır.
+//   Redis gerçek bir bağlantı yerine mock ile simüle edilir.
+//   SQLite veritabanı her test koşumunda bellekte sıfırlanır.
+//
+// Çalıştırma:
+//   npm test                    # Tüm testleri çalıştır
+//   npm test -- --watch         # İzleme modu
+//   npm test -- --coverage      # Kapsama raporu
+//
+// ═══════════════════════════════════════════════════
 
 const request = require('supertest');
 
-// Mock Redis before app loads
+// ─── Redis Mock ──────────────────────────────────
+// ioredis gerçek Redis bağlantısı yerine bellek içi
+// depolama simülasyonu ile değiştirilir.
+// Bu sayede test ortamında Redis kurulumu gerekmez ve
+// testler CI/CD pipeline'da bağımlılıksız çalışır.
+//
+// Mock'un desteklediği komutlar:
+//   get, set, incr, expire, ttl    — rate limiting
+//   sadd, smembers, del            — token revocation set
+//   ping, quit, disconnect         — bağlantı yönetimi
 jest.mock('ioredis', () => {
   const store = {};
   const sets = {};
@@ -46,11 +78,19 @@ afterAll(async () => {
   closeDatabase();
 });
 
+/**
+ * @group integration
+ * @description Middleware pipeline'ının uçtan uca entegrasyon testleri.
+ * Her test grubu belirli bir middleware katmanını veya endpoint'i doğrular.
+ */
 describe('Middleware Pipeline Tests', () => {
   const uniqueTestUser = `testuser_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
   const uniqueTestEmail = `test_${Date.now()}_${Math.floor(Math.random() * 1000)}@example.com`;
 
   // ─── Health Endpoint ──────────────────────────
+  // Sağlık endpoint'i kimlik doğrulaması gerektirmez.
+  // Load balancer ve container orchestration (Kubernetes)
+  // bu endpoint'i liveness/readiness probe olarak kullanır.
   describe('GET /api/health', () => {
     it('should return health status', async () => {
       const res = await request(app).get('/api/health');
@@ -61,6 +101,10 @@ describe('Middleware Pipeline Tests', () => {
   });
 
   // ─── Auth: Register ──────────────────────────
+  // Kayıt endpoint testleri üç senaryoyu kapsar:
+  //  1. Başarılı kayıt (201 Created)
+  //  2. Tekrar kayıt denemesi (400 Bad Request)
+  //  3. Eksik alan ile kayıt (400 Bad Request)
   describe('POST /api/auth/register', () => {
     it('should register a new user', async () => {
       const res = await request(app)
@@ -100,6 +144,9 @@ describe('Middleware Pipeline Tests', () => {
   });
 
   // ─── Auth: Login ─────────────────────────────
+  // Giriş testleri: geçerli kimlik bilgisi → JWT token,
+  // yanlış şifre → 401 Unauthorized yanıtı.
+  // Başarısız giriş denemeleri audit_logs'a kaydedilir.
   describe('POST /api/auth/login', () => {
     it('should login with valid credentials', async () => {
       const res = await request(app)
@@ -127,6 +174,11 @@ describe('Middleware Pipeline Tests', () => {
   });
 
   // ─── Protected Routes ─────────────────────────
+  // Korumalı endpoint testleri authGuard middleware'ini doğrular:
+  //  - Token olmadan erişim → 401
+  //  - Geçersiz token → 401
+  //  - Geçerli token ile erişim → 200
+  //  - Yetersiz rol ile erişim → 403
   describe('Protected Endpoints', () => {
     let token;
 

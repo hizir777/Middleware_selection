@@ -1,7 +1,29 @@
 // ═══════════════════════════════════════════════════
 // Winston Logger — Yapılandırılmış Loglama
 // ═══════════════════════════════════════════════════
-// Console (renkli) + Dosya (JSON) çift katmanlı log.
+//
+// Çift çıktı kanallı logger yapılandırması:
+//   1. Console Transport: Geliştirme ortamında renkli,
+//      okunabilir log çıktısı (timestamps + seviye)
+//   2. File Transport (logs/app.log): Üretim ortamında
+//      JSON formatında yapılandırılmış log (log analiz
+//      araçlarıyla işlenebilir: ELK, Splunk, vb.)
+//   3. Error File (logs/error.log): Sadece ERROR ve
+//      üzeri seviye loglar ayrı dosyada tutulur.
+//
+// Log Seviyeleri (Winston varsayılanı):
+//   error   — Kritik hatalar, uygulama durabilir
+//   warn    — Beklenmedik durum, uygulama çalışmaya devam eder
+//   info    — Önemli olaylar (startup, shutdown, auth)
+//   http    — HTTP istek/yanıt logları
+//   verbose — Ayrıntılı debuggingbildirimi
+//   debug   — Geliştirme ortamında detaylı bilgi
+//   silly   — En düşük seviye, nadiren kullanılır
+//
+// Kullanım:
+//   const logger = require('./utils/logger');
+//   logger.info('Sunucu başlatıldı');
+//   logger.error('Veritabanı bağlantısı kesildi', { error });
 // ═══════════════════════════════════════════════════
 
 const winston = require('winston');

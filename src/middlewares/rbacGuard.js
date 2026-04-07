@@ -1,14 +1,28 @@
 // ═══════════════════════════════════════════════════
 // RBAC Guard Middleware — "Zabıta"
 // ═══════════════════════════════════════════════════
+//
 // Pipeline'daki EN SON güvenlik bariyeri.
-// Kullanıcının rolünü kontrol eder.
+// Kimliği doğrulanmış kullanıcının gerekli role
+// sahip olup olmadığını kontrol eder.
 //
-// ⚡ Maliyet: Orta (~1-2ms)
-// 🎯 Amaç:   Rol tabanlı yetki kontrolü
+// ⚡ Maliyet: Orta (~1-2ms) — Sadece bellek kontrolü
+// 🎯 Amaç:   Rol tabanlı yetki kontrolü (RBAC)
 //
-// Bu middleware Auth Guard'dan SONRA gelir çünkü
-// req.user nesnesine ihtiyaç duyar.
+// Sıralama Zorunluluğu:
+//   Bu middleware MUTLAKA authGuard'dan SONRA gelmelidir.
+//   authGuard req.user nesnesini oluşturur; rbacGuard
+//   bu nesneye ihtiyaç duyar. Önce gelirse req.user
+//   undefined olur ve her isteği reddeder.
+//
+// RBAC Hiyerarşisi:
+//   ADMIN  (seviye 3) — tüm erişime izin
+//   EDITOR (seviye 2) — editor + student kaynaklarına erişim
+//   STUDENT(seviye 1) — sadece student kaynaklarına erişim
+//
+// Kullanım:
+//   router.get('/admin', authGuard(), rbacGuard(ROLES.ADMIN), ctrl);
+//   router.get('/editor', authGuard(), rbacGuard(ROLES.EDITOR), ctrl);
 // ═══════════════════════════════════════════════════
 
 const { hasPermission } = require('../constants/roles');
