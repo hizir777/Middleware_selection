@@ -37,6 +37,7 @@ async function register({ username, email, password, role = 'student' }, req) {
   }
 
   // Şifre hashleme (bcryptjs — kasıtlı olarak yavaş, brute-force koruması)
+  // TODO: Gelecekte bcrypt yerine Argon2id algoritmalarına geçiş yapılması düşünülebilir (daha yüksek bellek maliyeti için).
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
   // Parmak izi
@@ -153,6 +154,7 @@ async function login({ email, password }, req) {
 async function logout(token, req) {
   const decoded = require('jsonwebtoken').decode(token);
 
+  // FIXME: Eğer Redis bağlantısı anlık koparsa token iptali başarısız olabilir. Token revoke işlemine retry-fallback mekanizması ekle.
   await tokenService.revokeToken(token);
 
   if (decoded) {

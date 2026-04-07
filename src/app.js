@@ -127,6 +127,9 @@ async function startServer() {
     // SQLite veritabanı başlatma (sql.js — async WASM yükleme)
     await initDatabase();
 
+    // TODO: Production ortamında HTTPS SSL/TLS sertifika yapılandırması ekle.
+    // Şu an Express sadece HTTP üzerinden çalışıyor, load balancer tarafında TLS yapıldı varsayılıyor.
+
     // HTTP sunucusu
     const server = app.listen(config.port, () => {
       logger.info('══════════════════════════════════════════════');
@@ -158,6 +161,7 @@ async function startServer() {
       });
 
       // 10 saniye içinde kapanmazsa zorla kapat
+      // FIXME: Zorla kapatma yerine süren işlemleri/requestleri tamamlamak (Graceful drain) için önceliklendirme yapılmalı.
       setTimeout(() => {
         logger.error('Zorla kapatma (timeout)');
         process.exit(1);
