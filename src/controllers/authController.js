@@ -12,9 +12,6 @@ const MESSAGES = require('../constants/messages');
  * If validation passes, delegates creation to the authService.
  * Returns the created user object upon success.
  * 
- * TODO: Extract inline validations to a separate validation middleware (e.g., using Joi or Express-Validator) 
- * to keep the controller lean and improve reusability.
- * 
  * @param {import('express').Request} req - The Express request object containing user details in req.body.
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The next middleware function in the stack.
@@ -80,8 +77,6 @@ async function register(req, res, next) {
  * Handles user login and session initialization.
  * Validates the presence of email and password credentials.
  * If credentials are correct, returns a JWT token for subsequent authenticated requests.
- * 
- * FIXME: Consider implementing account lockout after consecutive failed login attempts to prevent brute force attacks.
  * 
  * @param {import('express').Request} req - The Express request object containing login credentials.
  * @param {import('express').Response} res - The Express response object.
@@ -149,8 +144,6 @@ async function logout(req, res, next) {
  * Handles password change requests for currently authenticated users.
  * Requires the old password for verification and a new password adhering to length rules.
  * Automatically invalidates active sessions (revokes current token) upon successful change.
- * 
- * TODO: Enforce stricter password complexity requirements (e.g., symbols, numbers) in a separate validation layer.
  * 
  * @param {import('express').Request} req - The Express request object containing req.user (from authGuard) and body.
  * @param {import('express').Response} res - The Express response object.

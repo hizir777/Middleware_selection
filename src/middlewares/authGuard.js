@@ -29,11 +29,9 @@ const { logSecurityEvent, AUDIT_EVENTS } = require('../services/auditService');
  * 4. The client's fingerprint matches the fingerprint stored when the token was originally issued.
  * 
  * By placing this after rate-limiting but before resource-intensive handlers, 
- * we form a robust "Cheap Check First" security perimeter.
+ * Verification includes timestamp, IP, User-Agent, and Screen Resolution.
  * 
- * TODO: Consider separating the fingerprint verification into its own optional middleware for finer control.
- * 
- * @returns {Function} Express middleware function handling authentication securely.
+ * @param {import('express').Request} req - The Express request object containing the user's token and context.
  */
 function authGuard() {
   return async (req, res, next) => {

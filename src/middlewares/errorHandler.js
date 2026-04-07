@@ -17,8 +17,6 @@ const config = require('../config');
  * Normalizes the error response to a standard JSON format and logs the details via the logger utility.
  * In development mode, it also attaches the stack trace to the response for easier debugging.
  * 
- * TODO: Implement a mechanism to filter out or obfuscate sensitive data from the stack trace before logging.
- * 
  * @param {Error} err - The error object passed from previous middlewares or route handlers.
  * @param {import('express').Request} req - The Express request object, which may contain contextual info like requestId.
  * @param {import('express').Response} res - The Express response object used to send the formatted error JSON.

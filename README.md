@@ -45,7 +45,7 @@ npm start
 
 ---
 
-## 📚 Dokümantasyon Harita
+## 📚 Table of Contents — İçindekiler
 
 | Belge | Içerik | Link |
 |-------|--------|------|

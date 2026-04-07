@@ -115,6 +115,10 @@ app.use(errorHandler);
 // Server Startup & Graceful Shutdown
 // ══════════════════════════════════════════════════════════════
 
+/**
+ * Initializes and starts the Express server.
+ * Connects to Redis, initializes the SQLite database, and defines graceful shutdown handlers.
+ */
 async function startServer() {
   try {
     // Redis bağlantısı

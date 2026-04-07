@@ -17,6 +17,14 @@ const SALT_ROUNDS = 10;
 /**
  * Yeni kullanıcı kaydı.
  */
+ /**
+ * Registers a new user in the system.
+ * Performs uniqueness check, hashes the password with bcrypt, and logs the audit event.
+ * 
+ * @param {Object} userData - Contains username, email, password, and optional role.
+ * @param {import("express").Request} req - Current request context for fingerprinting and logging.
+ * @returns {Promise<Object>} Object with success status, user details, or error code.
+ */
 async function register({ username, email, password, role = 'student' }, req) {
   // Mevcut kullanıcı kontrolü
   const existing = queryOne(
